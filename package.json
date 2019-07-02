@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/katunold/Write-it.git"
+    "url": "https://github.com/katunold/Write-it-Node.git"
   },
   "keywords": [
     "Nodejs",
@@ -21,9 +21,9 @@
   "author": "Arnold Katumba",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/katunold/Write-it/issues"
+    "url": "https://github.com/katunold/Write-it-Node/issues"
   },
-  "homepage": "https://github.com/katunold/Write-it#readme",
+  "homepage": "https://github.com/katunold/Write-it-Node#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
