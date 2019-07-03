@@ -1,6 +1,7 @@
-import app from './express';
-import config from './config/config';
-import mongoose from 'mongoose';
+const app = require('./express');
+const config = require('./config/config');
+const mongoose = require('mongoose');
+const userRoutes = require('./routes/user.routes');
 
 // Connection URL
 mongoose.Promise = global.Promise;
@@ -13,9 +14,13 @@ mongoose.connect(config.mongoLink(), { useNewUrlParser: true, useCreateIndex: tr
     process.exit();
   });
 
-app.listen(config.port, (err) => {
+app.use('/', userRoutes);
+
+app.server = app.listen(config.port, (err) => {
   if (err) {
     console.log(err);
   }
   console.info(`Server started on port ${config.port}`);
 });
+
+module.exports = app;

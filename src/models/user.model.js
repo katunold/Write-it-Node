@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import crypto from 'crypto';
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
       required: [true, 'User Name is required'],
       trim: true,
       unique: true
+    },
+    isVerified: {
+      type: Boolean,
+      default: false
     },
     hashed_password: {
       type: String,
@@ -63,6 +67,7 @@ userSchema.methods = {
   encryptPassword: function(password) {
     if (!password) return '';
     try {
+
       return crypto
         .createHmac('sha1', this.salt)
         .update(password)
