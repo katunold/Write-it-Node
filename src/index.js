@@ -1,12 +1,21 @@
-import express from 'express';
+import app from './express';
+import config from './config/config';
+import mongoose from 'mongoose';
 
-const app = express();
+// Connection URL
+mongoose.Promise = global.Promise;
+mongoose.connect(config.mongoLink(), { useNewUrlParser: true, useCreateIndex: true })
+  .then(() => {
+    console.log("Successfully connected to the database");
+  })
+  .catch((err) => {
+    console.log("Could not connect to the database. Exiting now...", err);
+    process.exit();
+  });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, (err) => {
+app.listen(config.port, (err) => {
   if (err) {
     console.log(err);
   }
-  console.info(`Server started on port ${PORT}`);
+  console.info(`Server started on port ${config.port}`);
 });
