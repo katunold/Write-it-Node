@@ -2,6 +2,7 @@ const app = require('./express');
 const config = require('./config/config');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/user.routes');
+const authRoutes = require('./routes/auth.routes');
 
 // Connection URL
 mongoose.Promise = global.Promise;
@@ -15,6 +16,7 @@ mongoose.connect(config.mongoLink(), { useNewUrlParser: true, useCreateIndex: tr
   });
 
 app.use('/', userRoutes);
+app.use('/', authRoutes);
 
 app.server = app.listen(config.port, (err) => {
   if (err) {

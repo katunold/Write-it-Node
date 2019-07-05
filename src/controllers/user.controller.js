@@ -29,30 +29,34 @@ const emailConfirmation = (req, res) => {
       })
     }
 
-    User.findOne({_id: token._userId}, function (err, user) {
-      if (!user) {
-        return res.status(400).send({
-          type: 'not-verified',
-          message: 'We were unable to find a user for this token.'
-        })
-      }
-      if (user.isVerified) {
-        return res.status(401).send({
-          type: 'already-verified',
-          message: 'This user has already been verified.'
-        })
-      }
-      user.isVerified = true;
-      user.save(function (err) {
-        if (err) {
-          return res.status(500).send({
-            message: err.message
-          })
-        }
-        res.status(200).send({
-          message: "The account has been verified. Please log in."
-        });
+    findUser(res, token);
+  })
+};
+
+const findUser = (res, token) => {
+  User.findOne({_id: token._userId}, function (err, user) {
+    if (!user) {
+      return res.status(400).send({
+        type: 'not-verified',
+        message: 'We were unable to find a user for this token.'
       })
+    }
+    if (user.isVerified) {
+      return res.status(401).send({
+        type: 'already-verified',
+        message: 'This user has already been verified.'
+      })
+    }
+    user.isVerified = true;
+    user.save(function (err) {
+      if (err) {
+        return res.status(500).send({
+          message: err.message
+        })
+      }
+      res.status(200).send({
+        message: "The account has been verified. Please log in."
+      });
     })
   })
 };

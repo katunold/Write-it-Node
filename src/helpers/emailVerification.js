@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const Token = require('../models/tokenVerification.model');
 const nodemailer = require('nodemailer');
+const config = require('../config/config');
 
 const emailVerify = (user, req, res) => {
   // create a verification token for this user
@@ -15,24 +16,8 @@ const emailVerify = (user, req, res) => {
     if (err) {
       return err;
     }
-    // send the email
-    const transporter = nodemailer.createTransport({
-      service: 'SendGrid',
-      auth: {
-        user: 'katunold', // process.env.SENDGRID_USERNAME
-        pass:  'Arnkat12@sendgrid'//process.env.SENDGRID_PASSWORD
-      }
-    });
-    const mailOptions = {
-      from: 'no-reply@write-it.com',
-      to: user.email,
-      subject: 'Account Verification Token',
-      text: `
-        Hello, 
-        \n\n Please verify your account by clicking the link: 
-        \n http://${req.headers.host}/confirmation/${token.token} \n
-        `
-    };
+
+    const mailOptions = mailOptionsData(req, user, token);
     transporter.sendMail(mailOptions, function (err) {
       if (err) {
         return res.status(500).send({ msg: err.message });
@@ -43,6 +28,28 @@ const emailVerify = (user, req, res) => {
       });
     });
   });
+};
+
+// send the email
+const transporter = nodemailer.createTransport({
+  service: 'SendGrid',
+  auth: {
+    user: config.user,
+    pass:  config.pass
+  }
+});
+
+const mailOptionsData = (req, user, token) => {
+  return {
+    from: 'no-reply@write-it.com',
+    to: user.email,
+    subject: 'Account Verification Token',
+    text: `
+        Hello, 
+        \n\n Please verify your account by clicking the link: 
+        \n http://${req.headers.host}/confirmation/${token.token} \n
+        `
+  }
 };
 
 module.exports = emailVerify;
