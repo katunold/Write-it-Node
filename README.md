@@ -1,4 +1,4 @@
-Write it - A Social platform for the creative at heart. This API is designed using nodejs and express
+Write it [![Build Status](https://travis-ci.org/katunold/Write-it-Node.svg?branch=develop)](https://travis-ci.org/katunold/Write-it-Node) [![Maintainability](https://api.codeclimate.com/v1/badges/0d5060f5e693202cc432/maintainability)](https://codeclimate.com/github/katunold/Write-it-Node/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/0d5060f5e693202cc432/test_coverage)](https://codeclimate.com/github/katunold/Write-it-Node/test_coverage)
 =======
 
 ## Vision
@@ -8,6 +8,7 @@ by leveraging the modern web.
 ---
 
 ## API Spec
+This API is designed using nodejs and express.
 The preferred JSON object to be returned by the API should be structured as follows:
 
 ### Users (for authentication)
@@ -190,11 +191,11 @@ Example request body:
 
 ```source-json
 {
-  "user":{
-    "username": "Jacob",
-    "email": "jake@jake.jake",
+    "firstName": "Arnold",
+    "lastName": "Katumba",
+    "userName": "arnold"
+    "email": "arnold@gmail.com"
     "password": "jakejake"
-  }
 }
 ```
 

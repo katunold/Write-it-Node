@@ -1,8 +1,8 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import compress from 'compression';
-import helmet from 'helmet';
-import cors from 'cors';
+const express = require('express');
+const bodyParser = require('body-parser');
+const compress = require('compression');
+const helmet = require('helmet');
+const cors = require('cors');
 
 const app = express();
 
