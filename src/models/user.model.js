@@ -2,36 +2,58 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
-    email: {
+    method: {
       type: String,
-      unique: true,
-      required: [true, 'Email is required'],
-      trim: true,
-      match: [/.+@.+\..+/, 'Please insert a valid email format'],
+      enum: ['local', 'google', 'facebook']
     },
-    firstName: {
-      type: String,
-      required: [true, 'First Name is required'],
-      trim: true
+    local: {
+      email: {
+        type: String,
+        lowercase: true,
+        unique: true,
+        trim: true,
+      },
+      firstName: {
+        type: String,
+        trim: true
+      },
+      lastName: {
+        type: String,
+        trim: true
+      },
+      userName: {
+        type: String,
+        trim: true,
+        unique: true
+      },
+      isVerified: {
+        type: Boolean
+      },
+      hashed_password: {
+        type: String,
+      },
     },
-    lastName: {
-      type: String,
-      required: [true, 'Last Name is required'],
-      trim: true
+    google: {
+      googleId: String,
+      email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+      },
+      firstName: String,
+      lastName: String,
+      picture: String
     },
-    userName: {
-      type: String,
-      required: [true, 'User Name is required'],
-      trim: true,
-      unique: true
-    },
-    isVerified: {
-      type: Boolean,
-      default: false
-    },
-    hashed_password: {
-      type: String,
-      required: [true, 'Password is required']
+    facebook: {
+      facebookId: String,
+      email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+      },
+      firstName: String,
+      lastName: String,
+      picture: String
     },
     salt: String
   },
@@ -41,28 +63,28 @@ const userSchema = new mongoose.Schema({
 );
 
 userSchema
-  .virtual('password')
+  .virtual('local.password')
   .set(function (password) {
-    this._password = password;
+    this.local._password = password;
     this.salt = this.makeSalt();
-    this.hashed_password = this.encryptPassword(password)
+    this.local.hashed_password = this.encryptPassword(password);
   })
   .get(function () {
-    return this._password;
+    return this.local._password;
   });
 
-userSchema.path('hashed_password').validate(function () {
-  if (this._password && this._password.length < 6) {
+userSchema.path('local.hashed_password').validate(function () {
+  if (this.local._password && this.local._password.length < 6) {
     this.invalidate('password', 'Password must be at least 6 characters.')
   }
-  if (this.isNew && !this._password) {
+  if (this.isNew && !this.local._password) {
     this.invalidate('password', 'Password is required')
   }
 }, null);
 
 userSchema.methods = {
   authenticate: function(plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
+    return this.encryptPassword(plainText) === this.local.hashed_password
   },
   encryptPassword: function(password) {
     if (!password) return '';
@@ -73,7 +95,7 @@ userSchema.methods = {
         .update(password)
         .digest('hex')
     } catch (err) {
-      return ''
+      return err;
     }
   },
   makeSalt: function() {

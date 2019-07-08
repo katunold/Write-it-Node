@@ -24,7 +24,7 @@ const emailVerify = (user, req, res) => {
       }
       return res.status(201).send({
         message: 'Successfully signed up',
-        accountVerification: `A verification email has been sent to ${user.email}`
+        accountVerification: `A verification email has been sent to ${user.local.email}`
       });
     });
   });
@@ -42,7 +42,7 @@ const transporter = nodemailer.createTransport({
 const mailOptionsData = (req, user, token) => {
   return {
     from: 'no-reply@write-it.com',
-    to: user.email,
+    to: user.local.email,
     subject: 'Account Verification Token',
     text: `
         Hello, 
