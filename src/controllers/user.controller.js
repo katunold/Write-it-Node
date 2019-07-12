@@ -2,12 +2,26 @@ const User = require('../models/user.model');
 const errorHandler = require('../helpers/dbErrorHandler');
 const emailVerify = require('../helpers/emailVerification');
 const Token = require('../models/tokenVerification.model');
+const { validationResult } = require('express-validator/check');
 
 /**
  * method to create a new user account
  */
 const create = (req, res) => {
-  const user = new User(req.body);
+  const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const { email, firstName, lastName, userName, password } = req.body;
+  const data = {
+    method: 'local',
+    local: {
+      isVerified: false,
+      email, firstName, lastName, userName, password
+    }
+  };
+
+  const user = new User(data);
   user.save((err, result) => {
     if (err) {
       return res.status(400).json({error: errorHandler.getErrorMessage(err)});
@@ -47,7 +61,7 @@ const findUser = (res, token) => {
         message: 'This user has already been verified.'
       })
     }
-    user.isVerified = true;
+    user.local.isVerified = true;
     user.save(function (err) {
       if (err) {
         return res.status(500).send({
@@ -63,7 +77,7 @@ const findUser = (res, token) => {
 
 const resendVerificationToken = (req, res) => {
 
-  User.findOne({email: req.body.email}, function (err, user) {
+  User.findOne({'local.email': req.body.email}, function (err, user) {
     if (!user) {
       return res.status(400).send({
         messsage: 'We were unable to find a user with that email.'

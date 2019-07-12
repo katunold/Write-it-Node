@@ -1,4 +1,5 @@
 const express = require('express');
+require('./config/passport.js');
 const bodyParser = require('body-parser');
 const compress = require('compression');
 const helmet = require('helmet');

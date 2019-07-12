@@ -1,10 +1,11 @@
 const express = require('express');
 const userCtrl = require('../controllers/user.controller');
+const validation = require('../helpers/validation');
 
 const router = express.Router();
 
 router.route('/api/users')
-  .post(userCtrl.create);
+  .post(validation('create'), userCtrl.create);
 
 router.route('/api/users/resend')
   .post(userCtrl.resendVerificationToken);
