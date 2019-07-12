@@ -1,6 +1,6 @@
 const User = require('../models/user.model');
 const errorHandler = require('../helpers/dbErrorHandler');
-const emailVerify = require('../helpers/emailVerification');
+const {emailVerify, passwordReset} = require('../helpers/emailVerification');
 const Token = require('../models/tokenVerification.model');
 const { validationResult } = require('express-validator/check');
 
@@ -94,4 +94,55 @@ const resendVerificationToken = (req, res) => {
   })
 };
 
-module.exports = { create, emailConfirmation, resendVerificationToken };
+const resetPassword = (req, res) => {
+  User.findOne({'local.email': req.body.email}, (err, user) => {
+    if (!user) {
+      return res.status(400).send({
+        messsage: 'We were unable to find a user with that email.'
+      });
+    }
+    if (!user.local.isVerified) {
+      return res.status(400).send({
+        messsage: 'This account is not yet verified'
+      });
+    }
+    return passwordReset(user, req, res);
+  });
+};
+
+const passwordUpate = (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  Token.findOne({token: token}, function (err, token) {
+    if (!token) {
+      return res.status(400).send({
+        type: 'not-verified',
+        message: 'We were unable to find a user for this token.'
+      })
+    }
+
+    User.findOne({_id: token._userId}, (err, user) => {
+      if (!user) {
+        return res.status(400).send({
+          message: 'User account doesnot exist'
+        })
+      }
+      user.local.password = password;
+      user.save(function (err) {
+        if (err) {
+          return res.status(500).send({
+            message: err.message
+          })
+        }
+        res.status(200).send({
+          message: "Password successfully reset"
+        });
+      })
+
+    })
+  })
+
+};
+
+module.exports = { create, emailConfirmation, resendVerificationToken, resetPassword, passwordUpate };
