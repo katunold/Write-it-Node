@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GooglePlusTokenStrategy = require('passport-google-plus-token');
 const FacebookTokenStrategy = require('passport-facebook-token');
+const TwitterTokenStrategy = require('passport-twitter-token');
 const dotenv = require('dotenv');
 const User = require('../models/user.model');
 
@@ -18,17 +19,8 @@ passport.use('googleToken',new GooglePlusTokenStrategy({
       return done(null, existingUser);
     }
 
-    // If new account
-    const newUser = new User({
-      method: 'google',
-      google: {
-        googleId: profile.id,
-        email: profile.emails[0].value,
-        firstName: profile.name.familyName,
-        lastName: profile.name.givenName,
-        picture: profile.photos[0].value
-      }
-    });
+    // if new account
+    const newUser = userData(profile, 'google');
     await newUser.save();
     done(null, newUser);
   }catch (e) {
@@ -42,34 +34,83 @@ passport.use('facebookToken', new FacebookTokenStrategy({
     clientSecret: process.env.facebookClientSecret,
   },
   async (accessToken, refreshToken, profile, done) => {
-  try {
-    const existingUser = await User.findOne({'facebook.facebookId': profile.id});
-    if (existingUser) {
-      return done(null, existingUser);
+    try {
+      const existingUser = await User.findOne({'facebook.facebookId': profile.id});
+      if (existingUser) {
+        return done(null, existingUser);
+      }
+
+      // If new account
+      const newUser = userData(profile, 'facebook');
+      await newUser.save();
+      done(null, newUser);
+
+    }catch (e) {
+      done(e, false, e.message);
     }
-
-    // If new account
-    const newUser = userData(profile, 'facebook');
-    await newUser.save();
-    done(null, newUser);
-
-  }catch (e) {
-    done(e, false, e.message);
   }
-  } 
+));
+
+passport.use('twitterToken', new TwitterTokenStrategy({
+    consumerKey: process.env.twitterClientID,
+    consumerSecret: process.env.twitterClientSecret
+  },
+  async (accessToken, refreshToken, profile, done) => {
+   // console.log(profile);
+   try {
+     const existingUser = await User.findOne({'twitter.twitterId': profile.id});
+     if (existingUser) {
+       return done(null, existingUser);
+     }
+
+     // if new account
+     const newUser = userData(profile, 'twitter');
+     await newUser.save();
+     done(null, newUser);
+   }catch (e) {
+     done(e, false, e.message);
+   }
+  }
 ));
 
 const userData = (profile, method) => {
-  return new User({
-    method,
-    facebook: {
-      facebookId: profile.id,
-      email: profile.emails[0].value,
-      firstName: profile.name.familyName,
-      lastName: profile.name.givenName,
-      picture: profile.photos[0].value
-    }
-  })
+  switch (method) {
+    case method === 'facebook':
+      return new User({
+        method,
+        facebook: {
+          facebookId: profile.id,
+          email: profile.emails[0].value,
+          firstName: profile.name.familyName,
+          lastName: profile.name.givenName,
+          picture: profile.photos[0].value
+        }
+      });
+    case method === 'google':
+      return new User({
+        method: 'google',
+        google: {
+          googleId: profile.id,
+          email: profile.emails[0].value,
+          firstName: profile.name.familyName,
+          lastName: profile.name.givenName,
+          picture: profile.photos[0].value
+        }
+      });
+    default:
+      return new User({
+        method,
+        twitter: {
+          twitterId: profile.id,
+          email: profile.emails[0].value,
+          username: profile.username,
+          displayName: profile.displayName,
+          firstName: profile.name.familyName,
+          lastName: profile.name.givenName,
+          picture: profile.photos[0].value
+        }
+      });
+  }
 };
 
 module.exports = passport;

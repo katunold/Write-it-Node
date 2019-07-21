@@ -4,13 +4,12 @@ const crypto = require('crypto');
 const userSchema = new mongoose.Schema({
     method: {
       type: String,
-      enum: ['local', 'google', 'facebook']
+      enum: ['local', 'google', 'facebook', 'twitter']
     },
     local: {
       email: {
         type: String,
         lowercase: true,
-        unique: true,
         trim: true,
       },
       firstName: {
@@ -23,8 +22,7 @@ const userSchema = new mongoose.Schema({
       },
       userName: {
         type: String,
-        trim: true,
-        unique: true
+        trim: true
       },
       isVerified: {
         type: Boolean
@@ -51,6 +49,19 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
       },
+      firstName: String,
+      lastName: String,
+      picture: String
+    },
+    twitter: {
+      twitterId: String,
+      email: {
+        type: String,
+        lowercase: true,
+        trim: true
+      },
+      username: String,
+      displayName: String,
       firstName: String,
       lastName: String,
       picture: String
