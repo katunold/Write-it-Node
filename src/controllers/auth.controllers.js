@@ -52,6 +52,19 @@ const facebookOAuth = (req, res) => {
   });
 };
 
+const twitterOAuth = (req, res) => {
+  const {_id, twitter} = req.user;
+  res.status(200).send({
+    accessToken: signToken(_id),
+    user: {
+      _id,
+      username: twitter.username,
+      displayName: twitter.displayName,
+      email: twitter.email
+    }
+  })
+};
+
 const signToken = (id) => {
   return jwt.sign({
     _id: id
@@ -68,4 +81,4 @@ const requireSignIn = expressjwt({
   userProperty: 'auth'
 });
 
-module.exports = { login, requireSignIn, googleOAuth, facebookOAuth };
+module.exports = { login, requireSignIn, googleOAuth, facebookOAuth, twitterOAuth };

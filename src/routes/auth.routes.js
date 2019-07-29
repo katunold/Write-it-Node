@@ -3,6 +3,7 @@ const authController = require('../controllers/auth.controllers');
 const passport = require('passport');
 const pasportGoogle = passport.authenticate('googleToken',{ session: false});
 const pasportFacebook = passport.authenticate('facebookToken',{ session: false});
+const passportTwitter = passport.authenticate('twitterToken', { session: false });
 
 
 const authRouter = express.Router();
@@ -21,5 +22,8 @@ authRouter.route('/auth/google')
 
 authRouter.route('/auth/facebook')
   .post(pasportFacebook, authController.facebookOAuth);
+
+authRouter.route('/auth/twitter')
+  .post(passportTwitter, authController.twitterOAuth);
 
 module.exports = authRouter;
