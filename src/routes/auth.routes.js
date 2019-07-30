@@ -1,6 +1,6 @@
-const express = require('express');
-const authController = require('../controllers/auth.controllers');
-const passport = require('passport');
+import express from 'express';
+import authController from '../controllers/auth.controllers';
+import passport from 'passport';
 const pasportGoogle = passport.authenticate('googleToken',{ session: false});
 const pasportFacebook = passport.authenticate('facebookToken',{ session: false});
 const passportTwitter = passport.authenticate('twitterToken', { session: false });
@@ -26,4 +26,4 @@ authRouter.route('/auth/facebook')
 authRouter.route('/auth/twitter')
   .post(passportTwitter, authController.twitterOAuth);
 
-module.exports = authRouter;
+export default authRouter;

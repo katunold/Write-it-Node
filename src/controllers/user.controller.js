@@ -1,18 +1,22 @@
-const User = require('../models/user.model');
-const errorHandler = require('../helpers/dbErrorHandler');
-const {emailVerify, passwordReset} = require('../helpers/emailVerification');
-const Token = require('../models/tokenVerification.model');
-const { validationResult } = require('express-validator/check');
+import User from '../models/user.model';
+import errorHandler from '../helpers/dbErrorHandler';
+import {emailVerify, passwordReset} from '../helpers/emailVerification';
+import Token from '../models/tokenVerification.model';
+import { validationResult } from 'express-validator';
 
 /**
  * method to create a new user account
  */
 const create = (req, res) => {
   const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+  Object.values(req.body).find(value => value === '');
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   const { email, firstName, lastName, userName, password } = req.body;
+  if (Object.keys(req.body).find(key => req.body[key] === '')) {
+    return res.status(401).json({ errors: `${req.body[key]} field is empty` });
+  }
   const data = {
     method: 'local',
     local: {
@@ -145,4 +149,4 @@ const passwordUpate = (req, res) => {
 
 };
 
-module.exports = { create, emailConfirmation, resendVerificationToken, resetPassword, passwordUpate };
+export default { create, emailConfirmation, resendVerificationToken, resetPassword, passwordUpate };

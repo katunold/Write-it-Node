@@ -1,7 +1,7 @@
-const crypto = require('crypto');
-const Token = require('../models/tokenVerification.model');
-const nodemailer = require('nodemailer');
-const config = require('../config/config');
+import crypto from 'crypto';
+import Token from '../models/tokenVerification.model';
+import nodemailer from 'nodemailer';
+import config from '../config/config';
 
 const emailVerify = (user, req, res) => {
   // create a verification token for this user
@@ -77,4 +77,4 @@ const sendEmail = (res, mailOptions, message) => {
   });
 };
 
-module.exports = { emailVerify, passwordReset};
+export { emailVerify, passwordReset};

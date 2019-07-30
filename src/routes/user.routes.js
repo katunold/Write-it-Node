@@ -1,6 +1,6 @@
-const express = require('express');
-const userCtrl = require('../controllers/user.controller');
-const validation = require('../helpers/validation');
+import express from 'express';
+import userCtrl from '../controllers/user.controller';
+import validation from '../helpers/validation';
 
 const router = express.Router();
 /**
@@ -33,4 +33,4 @@ router.route('/api/users/resend')
 router.route('/confirmation/:token')
   .get(userCtrl.emailConfirmation);
 
-module.exports = router;
+export default router;

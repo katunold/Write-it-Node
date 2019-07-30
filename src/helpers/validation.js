@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+import { body } from 'express-validator';
 
 const validate = (method) => {
   if (method === 'create') {
@@ -15,4 +15,4 @@ const validate = (method) => {
   }
 };
 
-module.exports = validate;
+export default validate;

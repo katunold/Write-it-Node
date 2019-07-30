@@ -1,8 +1,8 @@
-const app = require('./express');
-const config = require('./config/config');
-const mongoose = require('mongoose');
-const userRoutes = require('./routes/user.routes');
-const authRoutes = require('./routes/auth.routes');
+import app from './express';
+import config from './config/config';
+import mongoose from 'mongoose';
+import userRoutes from './routes/user.routes';
+import authRoutes from './routes/auth.routes';
 
 // Connection URL
 mongoose.Promise = global.Promise;
@@ -25,4 +25,4 @@ app.server = app.listen(config.port, (err) => {
   console.info(`Server started on port ${config.port}`);
 });
 
-module.exports = app;
+export default app;

@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 
 dotenv.config();
 const config = {
@@ -8,10 +8,10 @@ const config = {
   user: process.env.SENDGRID_USERNAME,
   pass:  process.env.SENDGRID_PASSWORD,
   mongoLink: () => {
-    return process.env.ENV === 'Test'
+    return process.env.NODE_ENV === 'test'
       ? 'mongodb://localhost/write-it-node-test'
       : 'mongodb://localhost/write-it-node';
   }
 };
 
-module.exports = config;
+export default config;

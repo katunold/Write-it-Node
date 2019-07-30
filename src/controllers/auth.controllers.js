@@ -1,7 +1,7 @@
-const User = require('../models/user.model');
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
-const expressjwt = require('express-jwt');
+import User from '../models/user.model';
+import jwt from 'jsonwebtoken';
+import config from '../config/config';
+import expressjwt from 'express-jwt';
 
 /**
  * Function to perform user authentication
@@ -81,4 +81,4 @@ const requireSignIn = expressjwt({
   userProperty: 'auth'
 });
 
-module.exports = { login, requireSignIn, googleOAuth, facebookOAuth, twitterOAuth };
+export default { login, requireSignIn, googleOAuth, facebookOAuth, twitterOAuth };

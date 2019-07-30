@@ -1,14 +1,16 @@
 {
   "presets": [
-    ["env", {
-      "targets": {
-        "node": "current"
-      }
-    }]
+    "@babel/preset-env"
   ],
   "plugins": [
-    ["transform-object-rest-spread", {
-      "useBuiltIns": true
-    }]
-  ]
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-runtime"
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }
