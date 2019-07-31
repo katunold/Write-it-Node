@@ -66,16 +66,7 @@ const findUser = (res, token) => {
       })
     }
     user.local.isVerified = true;
-    user.save(function (err) {
-      if (err) {
-        return res.status(500).send({
-          message: err.message
-        })
-      }
-      res.status(200).send({
-        message: "The account has been verified. Please log in."
-      });
-    })
+    saveUser(res, user, "The account has been verified. Please log in.");
   })
 };
 
@@ -133,20 +124,24 @@ const passwordUpate = (req, res) => {
         })
       }
       user.local.password = password;
-      user.save(function (err) {
-        if (err) {
-          return res.status(500).send({
-            message: err.message
-          })
-        }
-        res.status(200).send({
-          message: "Password successfully reset"
-        });
-      })
-
+      saveUser(res, user, "Password successfully reset");
     })
   })
+};
 
+const saveUser = (res,user, message) => {
+  user.save(
+    (err) => {
+      if (err) {
+        return res.status(500).send({
+          message: err.message
+        })
+      }
+      res.status(200).send({
+        message
+      });
+    }
+  );
 };
 
 export default { create, emailConfirmation, resendVerificationToken, resetPassword, passwordUpate };

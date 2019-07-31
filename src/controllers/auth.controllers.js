@@ -30,26 +30,12 @@ const login = (req, res) => {
 const googleOAuth = (req, res) => {
   // console.log(req.user);
   const {_id, google} = req.user;
-  res.status(200).send({
-    accessToken: signToken(_id),
-    user: {
-      _id,
-      name: google.firstName,
-      email: google.email
-    }
-  });
+  auth(res, _id, google);
 };
 
 const facebookOAuth = (req, res) => {
   const {_id, facebook} = req.user;
-  res.status(200).send({
-    accessToken: signToken(_id),
-    user: {
-      _id,
-      name: facebook.firstName,
-      email: facebook.email
-    }
-  });
+  auth(res, _id, facebook);
 };
 
 const twitterOAuth = (req, res) => {
@@ -69,6 +55,17 @@ const signToken = (id) => {
   return jwt.sign({
     _id: id
   }, config.jwtSecret, { expiresIn: 60*60});
+};
+
+const auth = (res, _id, strategy) => {
+  res.status(200).send({
+    accessToken: signToken(_id),
+    user: {
+      _id,
+      name: strategy.firstName,
+      email: strategy.email
+    }
+  });
 };
 
 /**
