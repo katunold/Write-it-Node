@@ -13,7 +13,7 @@ const login = (req, res) => {
       return res.status(401).send({ error: 'User not found'});
     }
     if (!user.authenticate(req.body.password)) {
-      return res.status(401).send({error: 'Email and Password dont match'});
+      return res.status(401).send({error: 'User-name and Password dont match'});
     }
 
     if (!user.local.isVerified) {

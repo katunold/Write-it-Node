@@ -13,3 +13,9 @@ exports.signUpData1 = {
   userName: '',
   password: '1qa2ws'
 };
+
+exports.signUpData2 = {
+  email: 'arnold@mail.com',
+  firstName: 'Arnold',
+  password: '1qa2ws'
+};

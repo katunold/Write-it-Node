@@ -1,5 +1,4 @@
 import User from '../models/user.model';
-import errorHandler from '../helpers/dbErrorHandler';
 import {emailVerify, passwordReset} from '../helpers/emailVerification';
 import Token from '../models/tokenVerification.model';
 import { validationResult } from 'express-validator';
@@ -17,6 +16,13 @@ const create = (req, res) => {
   if (Object.keys(req.body).find(key => req.body[key] === '')) {
     return res.status(401).json({ errors: `${req.body[key]} field is empty` });
   }
+  User.findOne({'local.email': email}, (err, result) => {
+    if (result) {
+      return res.status(400).send({
+        errors: `This email ${email} already exists, just login`
+      })
+    }
+  });
   const data = {
     method: 'local',
     local: {
@@ -27,12 +33,8 @@ const create = (req, res) => {
 
   const user = new User(data);
   user.save((err, result) => {
-    if (err) {
-      return res.status(400).json({error: errorHandler.getErrorMessage(err)});
-    }
-
     // create a verification token, save it and send an email
-    return emailVerify(user, req, res);
+    return emailVerify(result, req, res);
   });
 };
 

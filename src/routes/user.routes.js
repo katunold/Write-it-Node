@@ -4,7 +4,7 @@ import validation from '../helpers/validation';
 
 const router = express.Router();
 /**
- * route to handle user login
+ * route to handle user signup
  */
 router.route('/api/users')
   .post(validation('create'), userCtrl.create);
