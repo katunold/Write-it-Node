@@ -9,8 +9,8 @@ const config = {
   pass:  process.env.SENDGRID_PASSWORD,
   mongoLink: () => {
     return process.env.NODE_ENV === 'test'
-      ? 'mongodb://localhost/write-it-node-test'
-      : 'mongodb://mongo/write-it-node';
+      ? process.env.TEST_DB
+      : process.env.PRODUCTION_DB;
   }
 };
 
