@@ -1,10 +1,10 @@
-const express = require('express');
-const userCtrl = require('../controllers/user.controller');
-const validation = require('../helpers/validation');
+import express from 'express';
+import userCtrl from '../controllers/user.controller';
+import validation from '../helpers/validation';
 
 const router = express.Router();
 /**
- * route to handle user login
+ * route to handle user signup
  */
 router.route('/api/users')
   .post(validation('create'), userCtrl.create);
@@ -33,4 +33,4 @@ router.route('/api/users/resend')
 router.route('/confirmation/:token')
   .get(userCtrl.emailConfirmation);
 
-module.exports = router;
+export default router;

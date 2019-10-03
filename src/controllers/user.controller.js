@@ -1,18 +1,28 @@
-const User = require('../models/user.model');
-const errorHandler = require('../helpers/dbErrorHandler');
-const {emailVerify, passwordReset} = require('../helpers/emailVerification');
-const Token = require('../models/tokenVerification.model');
-const { validationResult } = require('express-validator/check');
+import User from '../models/user.model';
+import {emailVerify, passwordReset} from '../helpers/emailVerification';
+import Token from '../models/tokenVerification.model';
+import { validationResult } from 'express-validator';
 
 /**
  * method to create a new user account
  */
 const create = (req, res) => {
   const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+  Object.values(req.body).find(value => value === '');
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   const { email, firstName, lastName, userName, password } = req.body;
+  if (Object.keys(req.body).find(key => req.body[key] === '')) {
+    return res.status(401).json({ errors: `${req.body[key]} field is empty` });
+  }
+  User.findOne({'local.email': email}, (err, result) => {
+    if (result) {
+      return res.status(400).send({
+        errors: `This email ${email} already exists, just login`
+      })
+    }
+  });
   const data = {
     method: 'local',
     local: {
@@ -23,12 +33,8 @@ const create = (req, res) => {
 
   const user = new User(data);
   user.save((err, result) => {
-    if (err) {
-      return res.status(400).json({error: errorHandler.getErrorMessage(err)});
-    }
-
     // create a verification token, save it and send an email
-    return emailVerify(user, req, res);
+    return emailVerify(result, req, res);
   });
 };
 
@@ -62,16 +68,7 @@ const findUser = (res, token) => {
       })
     }
     user.local.isVerified = true;
-    user.save(function (err) {
-      if (err) {
-        return res.status(500).send({
-          message: err.message
-        })
-      }
-      res.status(200).send({
-        message: "The account has been verified. Please log in."
-      });
-    })
+    saveUser(res, user, "The account has been verified. Please log in.");
   })
 };
 
@@ -129,20 +126,24 @@ const passwordUpate = (req, res) => {
         })
       }
       user.local.password = password;
-      user.save(function (err) {
-        if (err) {
-          return res.status(500).send({
-            message: err.message
-          })
-        }
-        res.status(200).send({
-          message: "Password successfully reset"
-        });
-      })
-
+      saveUser(res, user, "Password successfully reset");
     })
   })
-
 };
 
-module.exports = { create, emailConfirmation, resendVerificationToken, resetPassword, passwordUpate };
+const saveUser = (res,user, message) => {
+  user.save(
+    (err) => {
+      if (err) {
+        return res.status(500).send({
+          message: err.message
+        })
+      }
+      res.status(200).send({
+        message
+      });
+    }
+  );
+};
+
+export default { create, emailConfirmation, resendVerificationToken, resetPassword, passwordUpate };

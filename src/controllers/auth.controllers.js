@@ -1,7 +1,7 @@
-const User = require('../models/user.model');
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
-const expressjwt = require('express-jwt');
+import User from '../models/user.model';
+import jwt from 'jsonwebtoken';
+import config from '../config/config';
+import expressjwt from 'express-jwt';
 
 /**
  * Function to perform user authentication
@@ -13,7 +13,7 @@ const login = (req, res) => {
       return res.status(401).send({ error: 'User not found'});
     }
     if (!user.authenticate(req.body.password)) {
-      return res.status(401).send({error: 'Email and Password dont match'});
+      return res.status(401).send({error: 'User-name and Password dont match'});
     }
 
     if (!user.local.isVerified) {
@@ -30,26 +30,12 @@ const login = (req, res) => {
 const googleOAuth = (req, res) => {
   // console.log(req.user);
   const {_id, google} = req.user;
-  res.status(200).send({
-    accessToken: signToken(_id),
-    user: {
-      _id,
-      name: google.firstName,
-      email: google.email
-    }
-  });
+  auth(res, _id, google);
 };
 
 const facebookOAuth = (req, res) => {
   const {_id, facebook} = req.user;
-  res.status(200).send({
-    accessToken: signToken(_id),
-    user: {
-      _id,
-      name: facebook.firstName,
-      email: facebook.email
-    }
-  });
+  auth(res, _id, facebook);
 };
 
 const twitterOAuth = (req, res) => {
@@ -71,6 +57,17 @@ const signToken = (id) => {
   }, config.jwtSecret, { expiresIn: 60*60});
 };
 
+const auth = (res, _id, strategy) => {
+  res.status(200).send({
+    accessToken: signToken(_id),
+    user: {
+      _id,
+      name: strategy.firstName,
+      email: strategy.email
+    }
+  });
+};
+
 /**
  * check user authentication status
  * @type {middleware}
@@ -81,4 +78,4 @@ const requireSignIn = expressjwt({
   userProperty: 'auth'
 });
 
-module.exports = { login, requireSignIn, googleOAuth, facebookOAuth, twitterOAuth };
+export default { login, requireSignIn, googleOAuth, facebookOAuth, twitterOAuth };

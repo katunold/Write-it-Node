@@ -1,9 +1,9 @@
-const express = require('express');
+import express from 'express';
+import bodyParser from 'body-parser';
+import compress from 'compression';
+import helmet from 'helmet';
+import cors from 'cors';
 require('./config/passport.js');
-const bodyParser = require('body-parser');
-const compress = require('compression');
-const helmet = require('helmet');
-const cors = require('cors');
 
 const app = express();
 
@@ -13,4 +13,4 @@ app.use(compress());
 app.use(helmet());
 app.use(cors());
 
-module.exports = app;
+export default app

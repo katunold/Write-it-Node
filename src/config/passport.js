@@ -1,9 +1,9 @@
-const passport = require('passport');
-const GooglePlusTokenStrategy = require('passport-google-plus-token');
-const FacebookTokenStrategy = require('passport-facebook-token');
-const TwitterTokenStrategy = require('passport-twitter-token');
-const dotenv = require('dotenv');
-const User = require('../models/user.model');
+import passport from 'passport';
+import GooglePlusTokenStrategy from 'passport-google-plus-token';
+import FacebookTokenStrategy from 'passport-facebook-token';
+import TwitterTokenStrategy from 'passport-twitter-token';
+import dotenv from 'dotenv';
+import User from '../models/user.model';
 
 dotenv.config();
 
@@ -113,4 +113,4 @@ const userData = (profile, method) => {
   }
 };
 
-module.exports = passport;
+export { passport };
