@@ -16,9 +16,6 @@ import Token from '../../src/models/tokenVerification.model';
 // };
 
 exports.useInTests = () => {
-  beforeEach((done) => {
-    done();
-  });
 
   afterEach((done) => {
     User.deleteMany({}).exec();

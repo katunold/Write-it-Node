@@ -10,7 +10,7 @@ const config = {
   mongoLink: () => {
     return process.env.NODE_ENV === 'test'
       ? 'mongodb://localhost/write-it-node-test'
-      : 'mongodb://localhost/write-it-node';
+      : 'mongodb://mongo/write-it-node';
   }
 };
 
